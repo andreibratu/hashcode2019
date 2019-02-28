@@ -1,10 +1,8 @@
-# from classes import Photo
-
 def calculate_interesting_factor(slide1, slide2):
     """
     Args:
-        slide1 (Slide)
-        slide2 (Slide)
+        slide1 (slide)
+        slide2 (slide)
     Returns:
         In int representing interesting factor between two slides.
     """
@@ -16,7 +14,7 @@ def calculate_interesting_factor(slide1, slide2):
     only_photo2 = len(photo2-photo1)
     in_both_photos = len(photo1&photo2)
 
-    return min(min(unique_photo1, unique_photo2), in_both_photos)
+    return min(min(only_photo1, only_photo2), in_both_photos)
 
 
 def read_input(file_name):
@@ -24,7 +22,7 @@ def read_input(file_name):
     Args:
         file_name (str): The filename, in the same path as the script
     Returns:
-        A list of Photo objects.
+        A list of photo objects.
     """
 
     with open(file_name, 'r') as f:
@@ -32,14 +30,15 @@ def read_input(file_name):
         n = int(lines[0])
         lines.pop(0)
         photos = []
-        for idx, l in enumerate(lines):
-            l = l.split()
-            print(l)
-            orientation = l[0]
-            how_many_tags = int(l[1])
+        idx = 0
+        for line in lines:
+            elements = line.split(" ")
+            orientation = elements[0]
+            how_many_tags = int(elements[1])
             if how_many_tags > 0:
-                tags = l[2:]
+                tags = elements[2:]
             photos.append(Photo(id=idx, orientation=orientation, tags=tags))
+            idx += 1
         return photos
 
 
