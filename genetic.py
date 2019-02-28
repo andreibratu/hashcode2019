@@ -7,9 +7,9 @@ GENERATIONS = 1000
 NEW_INDIVIDUALS = 1000
 TUPLE_SIZE_BOUND = 5
 SWAP_SLIDES_MUTATION_CHANCE_BOUND = 0.2
-DISCARD_PHOTO_CHANCE = 0.1
-SERIES = 50
-SLIDES_FROM_SERIE = 200
+DISCARD_PHOTO_CHANCE = 0
+SERIES = 5
+SLIDES_FROM_SERIE = 3
 POOL = []
 BEST_CANDIDATES = []
 random.seed(None)
@@ -39,7 +39,7 @@ def generate_offspring(i1, i2, tuple_size):
         else:
             new_individual += i2[idx:idx+tuple_size+1]
         flag_select_first = not flag_select_first
-        last_index = idx + tuple_size
+        last_index = idx
 
     if len(new_individual) < len(i1):
         if flag_select_first:
