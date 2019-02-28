@@ -1,4 +1,6 @@
-from classes import Photo, Slide, Individual
+from photo import Photo
+from slide import Slide
+from individual import Individual
 from util import read_input, write_output
 import random
 
