@@ -1,3 +1,5 @@
+# from classes import Photo
+
 def calculate_interesting_factor(slide1, slide2):
     """
     Args:
@@ -28,11 +30,13 @@ def read_input(file_name):
     with open(file_name, 'r') as f:
         lines = [l.strip() for l in f.readlines()]
         n = int(lines[0])
-        lines.pop()
+        lines.pop(0)
         photos = []
         for idx, l in enumerate(lines):
+            l = l.split()
+            print(l)
             orientation = l[0]
-            how_many_tags = l[1]
+            how_many_tags = int(l[1])
             if how_many_tags > 0:
                 tags = l[2:]
             photos.append(Photo(id=idx, orientation=orientation, tags=tags))
