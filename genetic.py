@@ -4,7 +4,7 @@ import random
 
 ############# Hypers #############
 GENERATIONS = 1000
-NEW_INDIVIDUALS = 1000
+NEW_INDIVIDUALS = 100
 TUPLE_SIZE_BOUND = 5
 SWAP_SLIDES_MUTATION_CHANCE_BOUND = 0.2
 DISCARD_PHOTO_CHANCE = 0
@@ -50,7 +50,6 @@ def generate_offspring(i1, i2, tuple_size):
     return new_individual
 
 
-
 ############# MAIN LOOP #############
 photos = read_input("a_example.txt")
 series = generate_photo_series([p.id for p in photos], SERIES, DISCARD_PHOTO_CHANCE)
@@ -73,7 +72,7 @@ for s in series:
             POOL.append(individual)
 
 
-for tuple_size in range(2, TUPLE_SIZE_BOUND+1):
+for tuple_size in range(5, TUPLE_SIZE_BOUND+1):
     pool = POOL[:]
     print(f'TUPLE SIZE {tuple_size}\n******')
     for g in range(GENERATIONS):
