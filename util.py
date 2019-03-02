@@ -1,29 +1,8 @@
-def calculate_interesting_factor(slide1, slide2):
-    """
-    Args:
-        slide1 (slide)
-        slide2 (slide)
-    Returns:
-        In int representing interesting factor between two slides.
-    """
-    photo1 = set(slide1.tags)
-    photo2 = set(slide2.tags)
-
-    # Set operations return a new set
-    only_photo1 = len(photo1-photo2)
-    only_photo2 = len(photo2-photo1)
-    in_both_photos = len(photo1&photo2)
-
-    return min(min(only_photo1, only_photo2), in_both_photos)
+from photo import Photo
+from individual import Individual
 
 
-def read_input(file_name):
-    """
-    Args:
-        file_name (str): The filename, in the same path as the script
-    Returns:
-        A list of photo objects.
-    """
+def read_input(file_name: str) -> List[Photo]:
 
     with open(file_name, 'r') as f:
         lines = [l.strip() for l in f.readlines()]
@@ -42,13 +21,9 @@ def read_input(file_name):
         return photos
 
 
-def write_output(candidate):
-    """
-    Args:
-        candidate (List[Slides]): A list of slides
-    """
+def write_output(individual: Individual, file_name: str):
 
-    with open('output.txt', 'w') as f:
-        f.write(len(candidate))
-        for slide in candidate:
+    with open(file_name, 'w') as f:
+        f.write(len(individual.slides()))
+        for slide in individual.slides():
             f.write(str(slide))
