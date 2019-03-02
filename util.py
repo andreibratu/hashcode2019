@@ -3,6 +3,7 @@ from individual import Individual
 
 
 def read_input(file_name: str) -> List[Photo]:
+    """Read problem input from textfile and return Photo objects."""
 
     with open(file_name, 'r') as f:
         lines = [l.strip() for l in f.readlines()]
@@ -22,6 +23,7 @@ def read_input(file_name: str) -> List[Photo]:
 
 
 def write_output(individual: Individual, file_name: str):
+    """Write the solution in output file."""
 
     with open(file_name, 'w') as f:
         f.write(len(individual.slides()))
