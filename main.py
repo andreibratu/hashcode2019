@@ -6,8 +6,8 @@ from individual import Individual
 from util import read_input, write_output
 from generate import generate_individual, generate_photo_series
 
-from strategies import tuple_cross, no_mutation_strategy, swap_photos_strategy,
-                       everybody_lives
+from strategies import tuple_cross, no_mutation_strategy,
+                       swap_photos_mutation_strategy, everybody_lives
 
 
 ############# HYPERPARAMS #############

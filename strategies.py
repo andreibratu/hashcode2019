@@ -1,4 +1,5 @@
-from typing import Callable
+import random
+from typing import Callable, List
 
 from individual import Individual
 
@@ -34,8 +35,10 @@ def no_mutation_strategy(i: Individual):
     return i
 
 
-def swap_photos_strategy(i: Individual):
-    pass
+def swap_photos_mutation_strategy(i: Individual):
+    idx = random.randrange(0, len(i.slides)-1)
+    i.slides[idx].photo1, i.slides[idx].photo2 = \
+        i.slides[idx].photo2, i.slides[idx].photo1
 
 
 def everybody_lives(individuals: List[Individual]):
