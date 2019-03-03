@@ -20,20 +20,11 @@ class Pool:
         self.new_individuals_setting = new_individuals_setting
         self.die_individuals_setting = die_individuals_setting
         self.best = None
-        self.calculate_population_fitness()
         assert None not in self.population
 
 
-    def calculate_population_fitness(self):
-        """Calculate population fitness and sort it ascendingly."""
-
-        for i in self.population:
-            i.calculate_fitness()
-        self.population.sort(key=lambda i: i.fitness)
-
-
     def set_best_individual(self):
-        self.calculate_population_fitness()
+        self.population.sort(key=lambda i: i.fitness)
         if self.best is None or \
            self.population[-1].fitness > self.best.fitness:
            self.best = self.population[-1]
@@ -61,6 +52,7 @@ class Pool:
         offsprings = []
 
         for _ in range(self.new_individuals_setting):
+            print(f'Offspring {_}')
             i1 = self.select_individual()
             i2 = self.select_individual()
             assert i1 is not None and i2 is not None
@@ -70,10 +62,8 @@ class Pool:
         for i in self.population:
             if random.random() <= self.mutation_probability:
                 i = self.mutation_strategy(i)
+                i.calculate_fitness()
 
         self.population += offsprings
-
-        self.calculate_population_fitness()
-        self.set_best_individual()
-
         self.extinction_strategy(self.population)
+        self.set_best_individual()

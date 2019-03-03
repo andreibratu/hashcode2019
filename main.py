@@ -16,14 +16,14 @@ from strategies import tuple_cross, no_mutation_strategy, \
 
 INIT_INDIVIDUALS = 5
 GENERATIONS = 1000
-OFFSPRINGS = 100
+OFFSPRINGS = 20
 DIE_INDIVIDUALS = 0
 MUTATATION_PROB = 0.1
 
 
 ############# MAIN LOOP #############
 
-
+random.seed(None)
 photos = read_input("b_lovely_landscapes.txt")
 
 generator = Generator(
