@@ -14,7 +14,7 @@ from strategies import tuple_cross, no_mutation_strategy, \
 ############# HYPERPARAMS #############
 
 
-INIT_INDIVIDUALS = 10
+INIT_INDIVIDUALS = 500
 GENERATIONS = 1000
 OFFSPRINGS = 100
 DIE_INDIVIDUALS = 0
@@ -24,10 +24,7 @@ MUTATATION_PROB = 0.1
 ############# MAIN LOOP #############
 
 
-photos = read_input("a_example.txt")
-
-for p in photos:
-    print(p)
+photos = read_input("b_lovely_landscapes.txt")
 
 generator = Generator(
     photos=photos,
@@ -36,7 +33,8 @@ generator = Generator(
     discard_h_per=0
 )
 
-individuals = set([generator.generate() for _ in range(INIT_INDIVIDUALS)])
+
+individuals = set(generator.generate(INIT_INDIVIDUALS))
 for i in individuals:
     print(i)
 

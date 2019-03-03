@@ -1,4 +1,6 @@
 import random
+from threading import Thread
+from queue import Queue
 from typing import List, Callable
 from photo import Photo
 from individual import Individual
@@ -28,34 +30,42 @@ class Generator:
             self.h_photos = self.discard_strategy(self.h_photos, discard_h_per)
 
 
-    def generate(self) -> Individual:
-        aux_v = self.v_photos[:]
-        aux_h = self.h_photos[:]
-        assert len(aux_v) % 2 == 0
+    def generate(self, how_many: int) -> List[Individual]:
+        def generate_individual(q, result):
+            while not q.empty():
+                idx = q.get()
 
-        slides = []
-        slides += [Slide(p, None) for p in aux_h]
+                print(f'Generating individual {idx}')
 
-        while len(aux_v) != 0:
-            # ValueError raised by randrange(0, 0) i.e.
-            # list contains one element
-            try:
-                idx1_v = random.randrange(0, len(aux_v)-1)
-            except ValueError:
-                idx1_v = 0
-            finally:
-                photo1_v = aux_v[idx1_v]
-                aux_v.pop(idx1_v)
+                slides = []
+                slides += [Slide(p, None) for p in self.h_photos]
+                v_used_ids = set()
 
-            try:
-                idx2_v = random.randrange(0, len(aux_v)-1)
-            except ValueError:
-                idx2_v = 0
-            finally:
-                photo2_v = aux_v[idx2_v]
-                aux_v.pop(idx2_v)
+                while len(v_used_ids) != len(self.v_photos):
+                    unused_vertical_ids = vertical_photo_ids-v_used_ids
+                    idx1_v, idx2_v = random.sample(unused_vertical_ids, 2)
+                    photo1_v = self.v_photos[idx1_v]
+                    photo2_v = self.v_photos[idx2_v]
+                    slides.append(Slide(photo1_v, photo2_v))
 
-            slides.append(Slide(photo1_v, photo2_v))
+                random.shuffle(slides)
+                result[idx] = Individual(slides)
 
-        random.shuffle(slides)
-        return Individual(slides)
+                q.task_done()
+            return True
+
+        result = [None for _ in range(how_many)]
+        vertical_photo_ids = set([p.id for p in self.v_photos])
+        work_q = Queue(maxsize=0)
+        num_threads = min(50, how_many)
+
+        for i in range(how_many):
+            work_q.put(i)
+
+        for i in range(num_threads):
+            worker = Thread(target=generate_individual, args=[work_q, result])
+            worker.start()
+
+        work_q.join()
+
+        return result
