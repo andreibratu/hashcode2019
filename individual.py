@@ -17,3 +17,10 @@ class Individual:
                 self.slides[i+1]
             )
             self.fitness = fitness
+
+
+    def __str__(self):
+        return f'INDIVIDUAL {self.fitness} --- {self.slides}'
+
+
+    __repr__ = __str__

@@ -8,4 +8,4 @@ class Photo:
         self.tags = tags
 
     def __str__(self):
-        return str(self.id)
+        return str(f'PHOTO {self.id} --- {self.orientation} --- {self.tags}')
