@@ -6,7 +6,7 @@ class Individual:
 
     def __init__(self, slides: List[Slide]):
         self.slides = slides
-        self.fitness = 0
+        self.calculate_fitness()
 
     def calculate_fitness(self):
         fitness = 0
@@ -16,4 +16,11 @@ class Individual:
                 self.slides[i],
                 self.slides[i+1]
             )
-            self.fitness = fitness
+        self.fitness = fitness
+
+
+    def __str__(self):
+        return f'INDIVIDUAL {self.fitness}'
+
+
+    __repr__ = __str__

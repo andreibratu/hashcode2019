@@ -1,3 +1,4 @@
+from typing import List
 from photo import Photo
 from individual import Individual
 

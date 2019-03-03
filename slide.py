@@ -12,15 +12,17 @@ class Slide:
 
     def __str__(self):
         if self.photo2 is None:
-            return str(self.photo1)
+            return f'SLIDE: {self.photo1} None\n'
         else:
-            return f'{self.photo1} {self.photo2}'
+            return f'SLIDE: {self.photo1} {self.photo2}\n'
 
     def get_tags(self) -> List[str]:
         if self.photo2 is None:
             return self.photo1.tags
         else:
             return self.photo1.tags + self.photo2.tags
+
+    __repr__ = __str__
 
 
 def calculate_interesting_factor(slide1: Slide, slide2: Slide) -> int:

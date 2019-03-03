@@ -10,14 +10,14 @@ class Pool:
     def __init__(self, population: List[Individual], cross_strategy: Callable,
                  mutation_strategy: Callable, extinction_strategy: Callable,
                  new_indiviuals_setting: int, die_individuals_setting: int,
-                 mutation_prob: int):
+                 mutation_probability: int):
         self.population = population
         self.cross_strategy = cross_strategy
-        self.mutation_strategy = mutate_strategy
+        self.mutation_strategy = mutation_strategy
         self.extinction_strategy = extinction_strategy
         self.new_indiviuals_setting = new_indiviuals_setting
         self.die_individuals_setting = die_individuals_setting
-        self.mutation_probability = mutation_prob
+        self.mutation_probability = mutation_probability
         self._total_fitness = 0
         self.calculate_population_fitness()
 
@@ -47,7 +47,7 @@ class Pool:
         """
         aim = random.randrange(0, self._total_fitness)
         seen_fitness = 0
-        for i in pool:
+        for i in self.population:
             if seen_fitness >= aim:
                 return i
             else:
@@ -67,7 +67,7 @@ class Pool:
             if random.random() <= self.mutation_probability:
                 i = self.mutation_strategy(i)
 
-        individuals += offsprings
+        self.population += offsprings
 
         self.calculate_population_fitness()
 
