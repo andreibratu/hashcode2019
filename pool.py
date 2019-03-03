@@ -1,4 +1,5 @@
 from typing import List, Callable, NewType
+from functools import reduce
 import random
 
 from individual import Individual
@@ -9,32 +10,33 @@ class Pool:
 
     def __init__(self, population: List[Individual], cross_strategy: Callable,
                  mutation_strategy: Callable, extinction_strategy: Callable,
-                 new_indiviuals_setting: int, die_individuals_setting: int,
-                 mutation_probability: int):
+                 mutation_probability: int, new_individuals_setting: int,
+                 die_individuals_setting: int):
         self.population = population
         self.cross_strategy = cross_strategy
         self.mutation_strategy = mutation_strategy
         self.extinction_strategy = extinction_strategy
-        self.new_indiviuals_setting = new_indiviuals_setting
-        self.die_individuals_setting = die_individuals_setting
         self.mutation_probability = mutation_probability
-        self._total_fitness = 0
+        self.new_individuals_setting = new_individuals_setting
+        self.die_individuals_setting = die_individuals_setting
+        self.best = None
         self.calculate_population_fitness()
+        assert None not in self.population
 
 
     def calculate_population_fitness(self):
         """Calculate population fitness and sort it ascendingly."""
 
-        self._total_fitness = 0
         for i in self.population:
             i.calculate_fitness()
-            self._total_fitness += i.fitness
         self.population.sort(key=lambda i: i.fitness)
 
 
-    def get_best_individual(self) -> Individual:
+    def set_best_individual(self):
         self.calculate_population_fitness()
-        return self.population[-1]
+        if self.best is None or \
+           self.population[-1].fitness > self.best.fitness:
+           self.best = self.population[-1]
 
 
     def select_individual(self) -> Individual:
@@ -45,21 +47,23 @@ class Pool:
         radial in the pie chart, and iterate from the start of the chart,
         until we find it.
         """
-        aim = random.randrange(0, self._total_fitness)
+
+        total_fitness = reduce(lambda acc, f: acc+f, [i.fitness for i in self.population])
+        aim = random.randrange(0, total_fitness)
         seen_fitness = 0
         for i in self.population:
+            seen_fitness += i.fitness
             if seen_fitness >= aim:
                 return i
-            else:
-                seen_fitness += i.fitness
 
 
     def evolve(self):
         offsprings = []
 
-        for _ in range(self.new_indiviuals_setting):
+        for _ in range(self.new_individuals_setting):
             i1 = self.select_individual()
             i2 = self.select_individual()
+            assert i1 is not None and i2 is not None
             offspring = self.cross_strategy(i1, i2)
             offsprings.append(offspring)
 
@@ -70,6 +74,6 @@ class Pool:
         self.population += offsprings
 
         self.calculate_population_fitness()
+        self.set_best_individual()
 
-        for _ in range(self.die_individuals_setting):
-            self.extinction_strategy(self.population)
+        self.extinction_strategy(self.population)

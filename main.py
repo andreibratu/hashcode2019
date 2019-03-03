@@ -14,7 +14,7 @@ from strategies import tuple_cross, no_mutation_strategy, \
 ############# HYPERPARAMS #############
 
 
-INIT_INDIVIDUALS = 500
+INIT_INDIVIDUALS = 5
 GENERATIONS = 1000
 OFFSPRINGS = 100
 DIE_INDIVIDUALS = 0
@@ -33,23 +33,21 @@ generator = Generator(
     discard_h_per=0
 )
 
+# Threaded generator might fail and return None individuals, discard them
+individuals = set(generator.generate(INIT_INDIVIDUALS)) - set([None])
 
-individuals = set(generator.generate(INIT_INDIVIDUALS))
-for i in individuals:
-    print(i)
+pool = Pool(
+    population = list(individuals),
+    cross_strategy = tuple_cross(3),
+    mutation_strategy = no_mutation_strategy,
+    extinction_strategy = everybody_lives,
+    new_individuals_setting = OFFSPRINGS,
+    die_individuals_setting = DIE_INDIVIDUALS,
+    mutation_probability = MUTATATION_PROB
+)
 
-# pool = Pool(
-#     population = list(individuals),
-#     cross_strategy = tuple_cross(3),
-#     mutation_strategy = no_mutation_strategy,
-#     extinction_strategy = everybody_lives,
-#     new_indiviuals_setting = OFFSPRINGS,
-#     die_individuals_setting = DIE_INDIVIDUALS,
-#     mutation_probability = MUTATATION_PROB
-# )
-#
-# for _ in range(GENERATIONS):
-#     pool.evolve()
-#     print(f'GENERATION {_} FITNESS: {pool.population[-1].fitness}')
-#
-# write_output(pool.get_best_individual(), "output.txt")
+for _ in range(GENERATIONS):
+    pool.evolve()
+    print(f'GENERATION {_} FITNESS: {pool.population[-1].fitness}')
+
+write_output(pool.get_best_individual(), "output.txt")
