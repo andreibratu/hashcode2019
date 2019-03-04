@@ -1,6 +1,9 @@
 import random
 from typing import List, Callable
+
 from models.photo import Photo
+
+from config import Config
 
 
 def _add_vertical_photo(old_set: List[Photo], new_set: List[Photo]):
@@ -18,38 +21,42 @@ def _add_vertical_photo(old_set: List[Photo], new_set: List[Photo]):
         old_set.append(vertical_photo)
 
 
-def keep_all_photos(photos: List[Photo]):
+def keep_all(photos: List[Photo]) -> List[Photo]:
     """Keep the initial set."""
 
-    pass
+    return photos
 
 
-def discard_outliers(margin: float) -> Callable:
+def discard_outlier(photos: List[Photo]) -> List[Photo]:
     """Discard photos whose number of tags diverge from set mean by margin."""
 
-    def f(photos: List[Photo]) -> List[Photo]:
-        number_tags = [len(p.tags) for p in photos]
-        avg = sum(number_tags)/(len(number_tags))
-        l_bound = avg - (avg * float)
-        u_bound = avg + (avg * float)
+    assert 0 < Config.DISCARD_PER < 1
 
-        remain = [p for p in photos if l_bound <= len(p.tags) <= u_bound]
-        _add_vertical_photo(photos, remain)
+    number_tags = [len(p.tags) for p in photos]
+    avg = sum(number_tags)/(len(number_tags))
+    l_bound = avg - (avg * Config.DISCARD_PER)
+    u_bound = avg + (avg * Config.DISCARD_PER)
 
-        return remain
+    remain = [p for p in photos if l_bound <= len(p.tags) <= u_bound]
 
-    assert 0 < margin < 1
-    return f
+    assert len(remain) != 0
+    _add_vertical_photo(photos, remain)
+
+    assert remain is not None
+
+    return remain
 
 
-def discard_random(percent: float) -> Callable:
+def discard_random(photos: List[Photo]) -> List[Photo]:
     """Discard a random percent of the photos from the set."""
 
-    def f(photos: List[Photo]) -> List[Photo]:
-        how_many_remain = len(photo) - int(len(photo) * percent)
+    assert 0 < Config.DISCARD_PER < 1
 
-        remain = random.sample(photos, how_many_remain)
-        _add_vertical_photo(photos, remain)
+    how_many_remain = len(photo) - int(len(photo) * Config.DISCARD_PER)
 
-    assert 0 < margin < 1
-    return f
+    remain = random.sample(photos, how_many_remain)
+    assert len(remain) != 0
+    _add_vertical_photo(photos, remain)
+    assert len(remain) != 0
+
+    return remain

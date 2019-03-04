@@ -2,21 +2,19 @@ import random
 from functools import reduce
 from typing import List, Callable, NewType
 from models.individual import Individual
+from config import Config
 
 
 class Pool:
 
     def __init__(self, population: List[Individual], cross_strategy: Callable,
                  mutation_strategy: Callable, extinction_strategy: Callable,
-                 mutation_probability: int, new_individuals_setting: int,
-                 die_individuals_setting: int):
+                 idx: int):
         self.population = population
         self.cross_strategy = cross_strategy
         self.mutation_strategy = mutation_strategy
         self.extinction_strategy = extinction_strategy
-        self.mutation_probability = mutation_probability
-        self.new_individuals_setting = new_individuals_setting
-        self.die_individuals_setting = die_individuals_setting
+        self.idx = idx
         self.best = None
         assert None not in self.population
 
@@ -37,8 +35,8 @@ class Pool:
         until we find it.
         """
 
-        total_fitness = reduce(lambda acc, f: acc+f, [i.fitness for i in self.population])
-        aim = random.randrange(0, total_fitness)
+        tf = reduce(lambda acc, f: acc+f, [i.fitness for i in self.population])
+        aim = random.randrange(0, tf)
         seen_fitness = 0
         for i in self.population:
             seen_fitness += i.fitness
@@ -49,8 +47,8 @@ class Pool:
     def evolve(self):
         offsprings = []
 
-        for _ in range(self.new_individuals_setting):
-            print(f'Offspring {_}')
+        for _ in range(Config.OFFSPRING):
+            print(f'POOL {self.idx+1} OFFSPRING {_+1}/{Config.OFFSPRING}')
             i1 = self.select_individual()
             i2 = self.select_individual()
             assert i1 is not None and i2 is not None
@@ -58,10 +56,10 @@ class Pool:
             offsprings.append(offspring)
 
         for i in self.population:
-            if random.random() <= self.mutation_probability:
+            if random.random() <= Config.MUTATATION_PROB:
                 i = self.mutation_strategy(i)
                 i.calculate_fitness()
 
         self.population += offsprings
-        self.extinction_strategy(self.population)
+        self.population = self.extinction_strategy(self.population)
         self.set_best_individual()
