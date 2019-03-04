@@ -29,25 +29,3 @@ def tuple_cross(tuple_size: int) -> Callable:
         return Individual(new_slides)
 
     return f
-
-
-def no_mutation_strategy(i: Individual):
-    return i
-
-
-def swap_photos_mutation_strategy(i: Individual):
-    # TODO
-    while True:
-        idx = random.randrange(0, len(i.slides)-1)
-        if i.slides[idx].photo2 is not None:
-            break
-    i.slides[idx].photo1, i.slides[idx].photo2 = \
-        i.slides[idx].photo2, i.slides[idx].photo1
-
-
-def everybody_lives(individuals: List[Individual]):
-    pass
-
-
-def no_discard_strategy(photos: List[Photo], discard_per: float):
-    pass
