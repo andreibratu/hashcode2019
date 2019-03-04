@@ -4,7 +4,7 @@ from models.slide import Slide
 from models.individual import Individual
 from models.generator import Generator
 from models.pool import Pool
-from strategy.cross_strategy import tuple_cross
+from strategy.cross_strategy import slice_cross
 from strategy.discard_strategy import keep_all_photos
 from strategy.mutation_strategy import no_mutation, swap_photos_in_slide
 from strategy.extinction_strategy import everybody_lives
@@ -38,7 +38,7 @@ individuals = set(generator.generate(INIT_INDIVIDUALS)) - set([None])
 
 pool = Pool(
     population = list(individuals),
-    cross_strategy = tuple_cross(3),
+    cross_strategy = slice_cross(3),
     mutation_strategy = no_mutation,
     extinction_strategy = everybody_lives,
     new_individuals_setting = OFFSPRINGS,
@@ -46,8 +46,8 @@ pool = Pool(
     mutation_probability = MUTATATION_PROB
 )
 
-for _ in range(GENERATIONS):
+for g in range(GENERATIONS):
     pool.evolve()
-    print(f'GENERATION {_} FITNESS: {pool.population[-1].fitness}')
+    print(f'GENERATION {g} FITNESS: {pool.population[-1].fitness}')
 
 write_output(pool.get_best_individual(), "output.txt")
