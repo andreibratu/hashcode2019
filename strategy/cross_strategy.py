@@ -1,17 +1,19 @@
 import random
 from typing import Callable, List
+
 from models.individual import Individual
 from models.photo import Photo
 
+from config import (GENERATIONS, CURR_GENERATION, TUPLE_SIZE, STEP)
 
-def slice_cross(tuple_size: int) -> Callable:
+def slice_cross() -> Callable:
     """Cross two individuals by alternating slices.
 
     The strategy assumes that over time, individuals will start to display
     subsequences with a good interesting factor, that would be lost if
     we alternated by a slide. A problem that might arise with this strategy
-    is that for a big `tuple_size` arguement, the algorithm might be
-    stuck with long random subsequences, leading to a slow evolution.
+    is that for a big `TUPLE_SIZE` parameter, the algorithm might be
+    stuck with long random subsequences, leading to slow evolution.
     """
 
     def f(i1: Individual, i2: Individual) -> Individual:
@@ -19,11 +21,11 @@ def slice_cross(tuple_size: int) -> Callable:
         new_slides = []
         last_index = 0
 
-        for idx in range(0, len(i1.slides), tuple_size):
+        for idx in range(0, len(i1.slides), TUPLE_SIZE):
             if flag_select_first:
-                new_slides += i1.slides[idx:idx+tuple_size+1]
+                new_slides += i1.slides[idx:idx+TUPLE_SIZE+1]
             else:
-                new_slides += i2.slides[idx:idx+tuple_size+1]
+                new_slides += i2.slides[idx:idx+TUPLE_SIZE+1]
             flag_select_first = not flag_select_first
             last_index = idx
 
@@ -48,7 +50,7 @@ def adaptive_slice_cross(total_generations: int, step: int) -> Callable:
     a step `t` for the tuple cross.
     """
 
-    interval_size = total_generations // step
+    interval_size = GENERATIONS // STEP
     left_end_interval = 0
     right_end_interval = interval_size - 1
     interval = 1
@@ -59,4 +61,5 @@ def adaptive_slice_cross(total_generations: int, step: int) -> Callable:
             left_end_interval = right_end_interval
             right_end_interval += interval_size
             interval += 1
-    return slice_cross(interval)
+    TUPLE_SIZE = interval
+    return slice_cross()

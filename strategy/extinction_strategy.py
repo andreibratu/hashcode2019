@@ -2,15 +2,17 @@ from typing import List, Callable
 from models.individual import Individual
 
 
-def everybody_lives(individuals: List[Individual]):
+def no_remove() -> Callable:
     """Keep entire population between generations.
 
     Leads to more diversity over time, might slow evolution in later stages.
     """
-    pass
+
+    def f(individuals: List[Individual]) -> List[Individual]:
+        return individuals
 
 
-def remove_least_fit(percent: float) -> Callable:
+def rm_least_fit(percent: float) -> Callable:
     """Remove lowest fit `percent` individuals from the population.
 
     Raises the overall fitness of the pool, might converge to a local optimum.
@@ -25,7 +27,7 @@ def remove_least_fit(percent: float) -> Callable:
     return f
 
 
-def remove_random(percent: float) -> Callable:
+def rm_random(percent: float) -> Callable:
     """Remove a random percent of the pool.
 
     Avoid local optimums at cost of longer convergence time.

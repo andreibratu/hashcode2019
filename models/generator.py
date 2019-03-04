@@ -5,29 +5,16 @@ from typing import List, Callable
 from models.photo import Photo
 from models.slide import Slide
 from models.individual import Individual
+from config import DISCARD_PERCENT
 
 
 class Generator:
-    """Generate Individual objects from an input of Photo objects.
+    """Generate Individual objects from an input of Photo objects."""
 
-    The Generator applies heuristics on the input photo set.
-    """
-
-    def __init__(self, photos: List[Photo], discard_strategy: Callable,
-                 discard_v_per: float, discard_h_per: float):
+    def __init__(self, photos: List[Photo], discard_strategy: Callable):
+        photos = discard_strategy()(photos)
         self.v_photos = [p for p in photos if p.orientation == 'V']
         self.h_photos = [p for p in photos if p.orientation == 'H']
-        self.discard_strategy = discard_strategy
-        self.discard_v_per = discard_v_per
-        self.discard_h_per = discard_h_per
-        self.apply_discard_strategy()
-
-
-    def apply_discard_strategy(self):
-        if self.discard_v_per > 0:
-            self.v_photos = self.discard_strategy(self.v_photos, discard_v_per)
-        if self.discard_h_per > 0:
-            self.h_photos = self.discard_strategy(self.h_photos, discard_h_per)
 
 
     def generate(self, how_many: int) -> List[Individual]:
@@ -35,7 +22,7 @@ class Generator:
             while not q.empty():
                 idx = q.get()
 
-                print(f'Generating individual {idx}')
+                print(f'GENERATOR {self.idx} INDIVIDUAL {idx}')
 
                 slides = []
                 slides += [Slide(p, None) for p in self.h_photos]
