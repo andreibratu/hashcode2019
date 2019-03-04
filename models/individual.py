@@ -6,6 +6,7 @@ class Individual:
 
     def __init__(self, slides: List[Slide]):
         self.slides = slides
+        self.vertical_slides = [s for s in slides if s.photo2 is not None]
         self.calculate_fitness()
 
     def calculate_fitness(self):
