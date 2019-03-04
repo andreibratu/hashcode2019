@@ -1,5 +1,5 @@
-from photo import Photo
 from typing import List
+from models.photo import Photo
 
 
 class Slide:

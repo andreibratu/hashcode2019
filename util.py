@@ -1,6 +1,6 @@
 from typing import List
-from photo import Photo
-from individual import Individual
+from models.photo import Photo
+from models.individual import Individual
 
 
 def read_input(file_name: str) -> List[Photo]:

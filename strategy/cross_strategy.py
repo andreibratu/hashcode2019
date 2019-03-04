@@ -1,7 +1,7 @@
 import random
 from typing import Callable, List
-from individual import Individual
-from photo import Photo
+from models.individual import Individual
+from models.photo import Photo
 
 
 def tuple_cross(tuple_size: int) -> Callable:

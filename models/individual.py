@@ -1,5 +1,5 @@
-from slide import Slide, calculate_interesting_factor
 from typing import List
+from models.slide import Slide, calculate_interesting_factor
 
 
 class Individual:

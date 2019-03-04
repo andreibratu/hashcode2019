@@ -1,14 +1,14 @@
 import random
-from photo import Photo
-from slide import Slide
-from individual import Individual
-from generator import Generator
-from pool import Pool
+from models.photo import Photo
+from models.slide import Slide
+from models.individual import Individual
+from models.generator import Generator
+from models.pool import Pool
+from strategy.cross_strategy import tuple_cross
+from strategy.discard_strategy import keep_all_photos
+from strategy.mutation_strategy import no_mutation, swap_photos_in_slide
+from strategy.extinction_strategy import everybody_lives
 from util import read_input, write_output
-from cross_strategy import tuple_cross
-from discard_strategy import keep_all_photos
-from mutation_strategy import no_mutation, swap_photos_in_slide
-from extinction_strategy import everybody_lives
 
 
 ############# HYPERPARAMS #############

@@ -1,10 +1,10 @@
 import random
-from threading import Thread
 from queue import Queue
+from threading import Thread
 from typing import List, Callable
-from photo import Photo
-from individual import Individual
-from slide import Slide
+from models.photo import Photo
+from models.slide import Slide
+from models.individual import Individual
 
 
 class Generator:

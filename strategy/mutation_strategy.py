@@ -1,3 +1,5 @@
+from models.individual import Individual
+
 def no_mutation(i: Individual):
     return i
 

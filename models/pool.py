@@ -1,9 +1,7 @@
-from typing import List, Callable, NewType
-from functools import reduce
 import random
-
-from individual import Individual
-from strategies import tuple_cross
+from functools import reduce
+from typing import List, Callable, NewType
+from models.individual import Individual
 
 
 class Pool:
