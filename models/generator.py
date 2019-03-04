@@ -5,6 +5,7 @@ from typing import List, Callable
 from models.photo import Photo
 from models.slide import Slide
 from models.individual import Individual
+from config import DISCARD_PERCENT
 
 
 class Generator:

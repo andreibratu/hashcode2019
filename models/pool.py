@@ -52,7 +52,7 @@ class Pool:
             i1 = self.select_individual()
             i2 = self.select_individual()
             assert i1 is not None and i2 is not None
-            offspring = self.cross_strategy(i1, i2)
+            offspring = self.cross_strategy()(i1, i2)
             offsprings.append(offspring)
 
         for i in self.population:
