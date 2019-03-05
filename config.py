@@ -2,7 +2,7 @@
 
 class Config:
     INIT_INDIVIDUALS = 5
-    GENERATIONS = 10
+    GENERATIONS = 5
     CURR_GENERATION = 0
     OFFSPRING = 3
     EXTN_PER = 0

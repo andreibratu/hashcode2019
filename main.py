@@ -64,6 +64,7 @@ for population in individuals_sets:
                 for g in range(Config.GENERATIONS):
                     Config.CURR_GENERATION += 1
                     pool.evolve()
+                    pool.set_best_individual()
                     bf = pool.population[-1].fitness
                     print(f'POOL {pool.id} GENERATION {g} FITNESS {bf}')
 
@@ -71,5 +72,7 @@ for population in individuals_sets:
                 best_individuals.append(pool.best)
                 print(pool.best.meta)
 
-best_individuals.sort(key=lambda i: i.individual)
+best_individuals.sort(key=lambda i: i.fitness)
+best = best_individuals[-1]
+print(f'Top dog: {best.fitness} -- {best.meta}')
 # write_output(best_individuals[-1], "output.txt")

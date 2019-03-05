@@ -1,6 +1,7 @@
 import random
 from functools import reduce
-from typing import List, Callable, NewType
+from typing import List, Callable, Tuple
+from numpy.random import choice
 from models.individual import Individual
 from config import Config
 
@@ -36,32 +37,21 @@ class Pool:
            })
 
 
-    def select_individual(self) -> Individual:
-        """Select individual with a bias towards fitness.
-
-        We can imagine the total fitness of the population as a pie chart,
-        where more fit individuals take a higher slice. Weselect a random
-        radial in the pie chart, and iterate from the start of the chart,
-        until we find it.
-        """
+    def select_parents(self) -> Tuple[Individual, Individual]:
+        """Select 2 individuals with a bias towards fitness."""
 
         tf = reduce(lambda acc, f: acc+f, [i.fitness for i in self.population])
-        aim = random.randrange(0, tf)
-        seen_fitness = 0
-        for i in self.population:
-            seen_fitness += i.fitness
-            if seen_fitness >= aim:
-                return i
+        prob = [i.fitness/tf for i in self.population]
+        parents = choice(a=self.population, replace=False, size=(1, 2), p=prob)
+        return parents[0] #First row of the 1x2 numpy array
 
 
     def evolve(self):
         offsprings = []
 
         for _ in range(Config.OFFSPRING):
-            i1 = self.select_individual()
-            i2 = self.select_individual()
+            i1, i2 = self.select_parents()
             print(f'POOL {self.id} OFFSPRING {_} <- {i1} x {i2}')
-            assert i1 is not None and i2 is not None
             offspring = self.cross_strategy(i1, i2)
             offspring.meta = i1.meta
             offsprings.append(offspring)
