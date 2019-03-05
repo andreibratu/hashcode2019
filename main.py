@@ -37,7 +37,7 @@ for s in discard_strategies:
     generators.append(g)
 
 g_idx = 0
-print('GENERATING INDIVIDUALS\n******\n')
+print('GENERATING INDIVIDUALS\n******')
 for g in generators:
     g.idx = g_idx
     # Threaded generator might fail and return None individuals, discard them
@@ -47,8 +47,7 @@ for g in generators:
     g_idx += 1
     print('******')
 
-print('\nSTARTING EVOLUTION PROCESS\n')
-p_idx = 0
+print('\nSTARTING EVOLUTION PROCESS\n******')
 for population in individuals_sets:
     for es in extinction_strategies:
         for ms in mutation_strategies:
@@ -56,7 +55,6 @@ for population in individuals_sets:
                 Config.CURR_GENERATION = 0
 
                 pool = Pool(
-                    idx=p_idx,
                     population=population,
                     extinction_strategy=es,
                     mutation_strategy=ms,
@@ -67,10 +65,11 @@ for population in individuals_sets:
                     Config.CURR_GENERATION += 1
                     pool.evolve()
                     bf = pool.population[-1].fitness
-                    print(f'POOL {p_idx+1} GENERATION {g} FITNESS {bf}')
+                    print(f'POOL {pool.id} GENERATION {g} FITNESS {bf}')
 
                 pool.set_best_individual()
                 best_individuals.append(pool.best)
-                p_idx += 1
+                print(pool.best.meta)
 
-# write_output(pool.get_best_individual(), "output.txt")
+best_individuals.sort(key=lambda i: i.individual)
+# write_output(best_individuals[-1], "output.txt")

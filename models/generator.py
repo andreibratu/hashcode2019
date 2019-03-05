@@ -12,8 +12,20 @@ class Generator:
 
     def __init__(self, photos: List[Photo], discard_strategy: Callable):
         photos = discard_strategy(photos)
+        self.discard_strategy = discard_strategy
         self.v_photos = [p for p in photos if p.orientation == 'V']
         self.h_photos = [p for p in photos if p.orientation == 'H']
+
+
+    def attach_meta(self, individuals: List[Individual]) -> List[Individual]:
+        for i in individuals:
+            assert hasattr(i, 'meta')
+            i.meta.update({
+                'discard': self.discard_strategy.__name__
+            })
+            assert 'discard' in i.meta
+
+        return individuals
 
 
     def generate(self, how_many: int) -> List[Individual]:
@@ -54,4 +66,4 @@ class Generator:
 
         work_q.join()
 
-        return result
+        return self.attach_meta(result)

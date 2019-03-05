@@ -7,14 +7,16 @@ from config import Config
 
 class Pool:
 
+    id = 0
+
     def __init__(self, population: List[Individual], cross_strategy: Callable,
-                 mutation_strategy: Callable, extinction_strategy: Callable,
-                 idx: int):
+                 mutation_strategy: Callable, extinction_strategy: Callable):
         self.population = population
         self.cross_strategy = cross_strategy
         self.mutation_strategy = mutation_strategy
         self.extinction_strategy = extinction_strategy
-        self.idx = idx
+        self.id = Pool.id
+        Pool.id += 1
         self.best = None
         assert None not in self.population
 
@@ -24,6 +26,14 @@ class Pool:
         if self.best is None or \
            self.population[-1].fitness > self.best.fitness:
            self.best = self.population[-1]
+           assert hasattr(self.best, 'meta')
+           assert 'discard' in self.best.meta
+           self.best.meta.update({
+            'pool_id': self.id,
+            'cross': self.cross_strategy.__name__,
+            'mutation': self.mutation_strategy.__name__,
+            'extinction': self.extinction_strategy.__name__
+           })
 
 
     def select_individual(self) -> Individual:
@@ -48,11 +58,12 @@ class Pool:
         offsprings = []
 
         for _ in range(Config.OFFSPRING):
-            print(f'POOL {self.idx+1} OFFSPRING {_+1}/{Config.OFFSPRING}')
             i1 = self.select_individual()
             i2 = self.select_individual()
+            print(f'POOL {self.id} OFFSPRING {_} <- {i1} x {i2}')
             assert i1 is not None and i2 is not None
             offspring = self.cross_strategy(i1, i2)
+            offspring.meta = i1.meta
             offsprings.append(offspring)
 
         for i in self.population:
@@ -62,4 +73,3 @@ class Pool:
 
         self.population += offsprings
         self.population = self.extinction_strategy(self.population)
-        self.set_best_individual()
