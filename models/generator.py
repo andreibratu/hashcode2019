@@ -21,15 +21,12 @@ class Generator:
         Generator.id += 1
 
 
-    def attach_meta(self, individuals: List[Individual]) -> List[Individual]:
-        for i in individuals:
-            assert hasattr(i, 'meta')
-            i.meta.update({
-                'discard': self.discard_strategy.__name__
-            })
-            assert 'discard' in i.meta
-
-        return individuals
+    def _attach_meta(self, i: Individual) -> Individual:
+        assert hasattr(i, 'meta')
+        i.meta.update({
+            'discard': self.discard_strategy.__name__
+        })
+        return i
 
 
     def generate(self, how_many: int) -> List[Individual]:
@@ -57,7 +54,7 @@ class Generator:
                     v_used_ids.add(idx2_v)
 
                 random.shuffle(slides)
-                result[idx] = Individual(slides)
+                result[idx] = self._attach_meta(Individual(slides))
 
                 q.task_done()
             return True
@@ -75,4 +72,8 @@ class Generator:
             worker.start()
 
         work_q.join()
-        return self.attach_meta(result)
+
+        result = [i for i in result if i is not None]
+        assert result != []
+
+        return result
