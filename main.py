@@ -20,9 +20,9 @@ photos = read_input("b_lovely_landscapes.txt")
 
 # discard_strategies = [keep_all, discard_outlier, discard_random]
 discard_strategies = [keep_all]
-extinction_strategies = [no_remove, rm_least_fit, rm_random]
-mutation_strategies = [no_mutation, swap_photos_in_slide]
-cross_strategies = [slice_cross]
+extinction_strategies = [no_remove]
+mutation_strategies = [no_mutation]
+cross_strategies = [adaptive_slice_cross]
 
 generators = []
 individuals_sets = []

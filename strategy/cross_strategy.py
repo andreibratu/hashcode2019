@@ -53,6 +53,7 @@ def adaptive_slice_cross(i1: Individual, i2: Individual) -> Individual:
     right_end_interval = interval_size - 1
     interval = 1
     while True:
+        print(left_end_interval, Config.CURR_GENERATION, right_end_interval)
         if left_end_interval <= Config.CURR_GENERATION <= right_end_interval:
             break
         else:
