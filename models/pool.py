@@ -1,5 +1,7 @@
 import random
 from functools import reduce
+from queue import Queue
+from threading import Thread
 from typing import List, Callable, Tuple
 from numpy.random import choice
 from models.individual import Individual
@@ -47,14 +49,34 @@ class Pool:
 
 
     def evolve(self):
-        offsprings = []
+        def create_offspring(q, result):
+            while not q.empty():
+                idx = q.get()
 
-        for _ in range(Config.OFFSPRING):
-            i1, i2 = self.select_parents()
-            print(f'POOL {self.id} OFFSPRING {_} <- {i1} x {i2}')
-            offspring = self.cross_strategy(i1, i2)
-            offspring.meta = i1.meta
-            offsprings.append(offspring)
+                i1, i2 = self.select_parents()
+                # print(f'POOL {self.id} OFFSPRING {idx} <- {i1} x {i2}')
+                offspring = self.cross_strategy(i1, i2)
+                offspring.meta = i1.meta
+                result[idx] = offspring
+
+                q.task_done()
+            return True
+
+        offsprings = [None for _ in range(Config.OFFSPRING)]
+        work_q = Queue(maxsize=0)
+        num_threads = min(50, Config.OFFSPRING)
+
+        for i in range(Config.OFFSPRING):
+            work_q.put(i)
+
+        for i in range(num_threads):
+            worker = Thread(target=create_offspring, args=[work_q, offsprings])
+            worker.setDaemon(True)
+            worker.start()
+
+        work_q.join()
+
+        assert None not in offsprings
 
         for i in self.population:
             if random.random() <= Config.MUTATATION_PROB:

@@ -69,6 +69,7 @@ class Generator:
 
         for i in range(num_threads):
             worker = Thread(target=generate_individual, args=[work_q, result])
+            worker.setDaemon(True)
             worker.start()
 
         work_q.join()

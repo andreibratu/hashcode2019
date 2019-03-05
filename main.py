@@ -65,15 +65,14 @@ for s in itertools.product(*[populations, ext_strat, mut_strat, cross_strat]):
         pool.set_best_individual()
         bf = pool.population[-1].fitness
         print(f'POOL {pool.id} GENERATION {g} FITNESS {bf}')
-        print('***')
 
     best_individuals.append(pool.best)
 
 best_individuals.sort(key=lambda i: i.fitness)
 best = best_individuals[-1]
 best = Config.add_meta(best)
-print(f'Fitness -- {best.fitness}')
+print(f'\nFitness -- {best.fitness}')
 for k, v in best.meta.items():
     print(f'{k} -- {v}')
-
+print('\nWRITING OUTPUT...')
 write_output(best, "output.txt")

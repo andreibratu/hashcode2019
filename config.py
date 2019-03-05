@@ -3,10 +3,10 @@
 from models.individual import Individual
 
 class Config:
-    INIT_INDIVIDUALS = 5
-    GENERATIONS = 5
+    INIT_INDIVIDUALS = 100
+    GENERATIONS = 15
     CURR_GENERATION = 0
-    OFFSPRING = 3
+    OFFSPRING = 100
     MUTATATION_PROB = 1
     DISCARD_PER = 0.2
     EXTN_PER = 0.2
