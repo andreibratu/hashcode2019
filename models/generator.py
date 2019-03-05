@@ -44,11 +44,17 @@ class Generator:
                 v_used_ids = set()
 
                 while len(v_used_ids) != len(self.v_photos):
+                    # While not all vertical photos were used
                     unused_vertical_ids = vertical_photo_ids-v_used_ids
                     idx1_v, idx2_v = random.sample(unused_vertical_ids, 2)
-                    photo1_v = self.v_photos[idx1_v]
-                    photo2_v = self.v_photos[idx2_v]
+                    for p in self.v_photos:
+                        if p.id == idx1_v:
+                            photo1_v = p
+                        if p.id == idx2_v:
+                            photo2_v = p
                     slides.append(Slide(photo1_v, photo2_v))
+                    v_used_ids.add(idx1_v)
+                    v_used_ids.add(idx2_v)
 
                 random.shuffle(slides)
                 result[idx] = Individual(slides)
@@ -69,5 +75,4 @@ class Generator:
             worker.start()
 
         work_q.join()
-
         return self.attach_meta(result)

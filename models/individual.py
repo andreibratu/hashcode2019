@@ -24,9 +24,5 @@ class Individual:
             )
         self.fitness = fitness
 
-
     def __str__(self):
         return f'INDIVIDUAL {self.id}'
-
-
-    __repr__ = __str__

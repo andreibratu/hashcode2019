@@ -23,10 +23,13 @@ def read_input(file_name: str) -> List[Photo]:
         return photos
 
 
-def write_output(individual: Individual, file_name: str):
+def write_output(i: Individual, file_name: str):
     """Write the solution in output file."""
 
     with open(file_name, 'w') as f:
-        f.write(str(len(individual.slides)))
-        for slide in individual.slides:
-            f.write(str(slide))
+        f.write(f'{len(i.slides)}\n')
+        for slide in i.slides:
+            if slide.photo2 is None:
+                f.write(f'{slide.photo1.id}\n')
+            else:
+                f.write(f'{slide.photo1.id} {slide.photo2.id}\n')

@@ -19,7 +19,7 @@ from util import read_input, write_output
 
 
 random.seed(None)
-photos = read_input("b_lovely_landscapes.txt")
+photos = read_input("c_memorable_moments.txt")
 
 disc_strat = [keep_all]
 ext_strat = [no_remove]
@@ -49,7 +49,6 @@ for g in generators:
 
 print('STARTING EVOLUTION PROCESS\n******')
 for s in itertools.product(*[populations, ext_strat, mut_strat, cross_strat]):
-    print(s)
     population, es, ms, cs = s
     Config.CURR_GENERATION = 0
 

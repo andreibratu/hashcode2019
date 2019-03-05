@@ -6,6 +6,3 @@ class Photo:
         self.id = id
         self.orientation = orientation
         self.tags = tags
-
-    def __str__(self):
-        return str(f'PHOTO {self.id} --- {self.orientation} --- {self.tags}')
