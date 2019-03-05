@@ -7,72 +7,83 @@ from models.individual import Individual
 from models.generator import Generator
 from models.pool import Pool
 
-from strategy.cross_strategy import slice_cross, adaptive_slice_cross
 from strategy.discard_strategy import keep_all, discard_outlier, discard_random
+from strategy.cross_strategy import slice_cross, adaptive_slice_cross
 from strategy.mutation_strategy import no_mutation, swap_photos_slide, \
-                                       remove_random_slide, swap_slides, \
-                                       random_mutation_strategy
-from strategy.extinction_strategy import no_remove, rm_least_fit, rm_random
+                                       swap_slides, random_mutate
+from strategy.extinction_strategy import rm_least_fit, rm_random
 
 from config import Config
 from util import read_input, write_output
 
+disc_strat = [keep_all, discard_outlier, discard_random]
+cross_strat = [adaptive_slice_cross, slice_cross]
+ext_strat = [rm_least_fit]
+mut_strat = [random_mutate]
+input_files = ['a_example.txt', 'b_lovely_landscapes.txt',
+               'c_memorable_moments.txt', 'd_pet_pictures', 'e_shiny_selfies']
 
-random.seed(None)
-photos = read_input("c_memorable_moments.txt")
-
-disc_strat = [keep_all]
-ext_strat = [no_remove]
-mut_strat = [no_mutation]
-cross_strat = [slice_cross]
+Config.GENERS = len(disc_strat)
 
 ######
 generators = []
-populations = []
+pops = []
 pools = []
 best_individuals = []
 ######
 
-for s in disc_strat:
-    g = Generator(
-        photos=photos,
-        discard_strategy=s,
-    )
-    generators.append(g)
+for input_file in input_files:
+    print(f'INPUT: {input_file}')
+    Generator.id = 0
+    Pool.id = 0
 
-print('GENERATING INDIVIDUALS\n******')
-for g in generators:
-    generated = g.generate(Config.INIT_INDIVIDUALS)
-    assert None not in generated
-    populations.append(generated)
-    print('******')
+    output_file = input_file[0] + '_output.txt'
+    photos = read_input(input_file)
 
-print('STARTING EVOLUTION PROCESS\n******')
-for s in itertools.product(*[populations, ext_strat, mut_strat, cross_strat]):
-    population, es, ms, cs = s
-    Config.CURR_GENERATION = 0
+    for s in disc_strat:
+        g = Generator(
+            photos=photos,
+            discard_strategy=s,
+        )
+        generators.append(g)
 
-    pool = Pool(
-        population=population,
-        extinction_strategy=es,
-        mutation_strategy=ms,
-        cross_strategy=cs,
-    )
+    print('GENERATING INDIVIDUALS\n******')
+    for g in generators:
+        generated = g.generate(Config.INDIVIDUALS)
+        assert None not in generated
+        pops.append(generated)
+        print('******')
 
-    for g in range(Config.GENERATIONS):
-        Config.CURR_GENERATION += 1
-        pool.evolve()
-        pool.set_best_individual()
-        bf = pool.population[-1].fitness
-        print(f'POOL {pool.id} GENERATION {g} FITNESS {bf}')
+    print('STARTING EVOLUTION PROCESS\n******')
+    strategies = itertools.product(*[pops, ext_strat, mut_strat, cross_strat])
+    how_many_s = len(pops)*len(ext_strat)*len(mut_strat)*len(cross_strat)
+    for s in strategies:
+        population, es, ms, cs = s
+        print(es.__name__, ms.__name__, cs.__name__)
+        Config.CURR_GENERATION = 0
 
-    best_individuals.append(pool.best)
+        pool = Pool(
+            population=population[:],
+            extinction_strategy=es,
+            mutation_strategy=ms,
+            cross_strategy=cs,
+        )
 
-best_individuals.sort(key=lambda i: i.fitness)
-best = best_individuals[-1]
-best = Config.add_meta(best)
-print(f'\nFitness -- {best.fitness}')
-for k, v in best.meta.items():
-    print(f'{k} -- {v}')
-print('\nWRITING OUTPUT...')
-write_output(best, "output.txt")
+        for g in range(Config.GNRTS):
+            random.seed(None)
+            Config.CURR_GENERATION += 1
+            pool.evolve()
+            pool.set_best_individual()
+            bf = pool.population[-1].fitness
+            print(f'POOL {pool.id}/{how_many_s-1} GENERATION {g} FITNESS {bf}')
+
+        best_individuals.append(pool.best)
+
+    best_individuals.sort(key=lambda i: i.fitness)
+    best = best_individuals[-1]
+    best = Config.add_meta(best)
+    print(f'\nFitness -- {best.fitness}')
+    for k, v in best.meta.items():
+        print(f'{k} -- {v}')
+    print('\nWRITING OUTPUT...')
+    write_output(best, output_file)

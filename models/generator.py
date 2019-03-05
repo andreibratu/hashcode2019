@@ -2,9 +2,12 @@ import random
 from queue import Queue
 from threading import Thread
 from typing import List, Callable
+
 from models.photo import Photo
 from models.slide import Slide
 from models.individual import Individual
+
+from config import Config
 
 
 class Generator:
@@ -34,7 +37,7 @@ class Generator:
             while not q.empty():
                 idx = q.get()
 
-                print(f'GENERATOR {self.id} INDIVIDUAL {idx}')
+                print(f'GENERATOR {self.id}/{Config.GENERS-1} INDIVIDUAL {idx}')
 
                 slides = []
                 slides += [Slide(p, None) for p in self.h_photos]

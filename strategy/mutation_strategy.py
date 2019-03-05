@@ -17,10 +17,8 @@ def swap_photos_slide(i: Individual) -> Individual:
 
     mutate_slide = random.sample(i.vertical_slides, 1)[0]
 
-    mutate_slide.photo1, mutate_slide[idx].photo2 = \
-        mutate_slide[idx].photo2, mutate_slide.photo1
-    # Mutation done by reference, assertion should be fine
-    assert mutate_slide in i.slides
+    mutate_slide.photo1, mutate_slide.photo2 = \
+        mutate_slide.photo2, mutate_slide.photo1
     return i
 
 
@@ -40,7 +38,7 @@ def remove_random_slide(i: Individual) -> Individual:
     return i
 
 
-def random_mutation_strategy(i: Individual) -> Individual:
+def random_mutate(i: Individual) -> Individual:
     """Apply random mutation on the individual."""
 
     f = random.sample([swap_photos_slide, swap_slides, remove_random_slide], 1)

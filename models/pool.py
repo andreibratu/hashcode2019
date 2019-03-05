@@ -85,3 +85,5 @@ class Pool:
 
         self.population += offsprings
         self.population = self.extinction_strategy(self.population)
+        assert len(self.population) == Config.INDIVIDUALS
+        assert self.population != []
