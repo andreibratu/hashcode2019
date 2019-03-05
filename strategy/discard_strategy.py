@@ -1,24 +1,7 @@
 import random
 from typing import List, Callable
-
 from models.photo import Photo
-
 from config import Config
-
-
-def _add_vertical_photo(old_set: List[Photo], new_set: List[Photo]):
-    """Auxiliary function that mentains the even vertical photos restriction.
-
-    Function appends to `new_set` a vertical photo that is not in it.
-    """
-
-    vertical_photos_remain = [p for p in new_set if p.orientation == 'V']
-    # Check if vertical photos are in even number
-    if len(vertical_photos_remain) % 2 == 0:
-        # Odd number of vertical photos, add one more
-        vertical_photo = [p for p in old_set \
-                          if p.orientation == 'V' and p not in new_set][0]
-        old_set.append(vertical_photo)
 
 
 def keep_all(photos: List[Photo]) -> List[Photo]:
@@ -37,14 +20,15 @@ def discard_outlier(photos: List[Photo]) -> List[Photo]:
     l_bound = avg - (avg * Config.DISCARD_PER)
     u_bound = avg + (avg * Config.DISCARD_PER)
 
-    remain = [p for p in photos if l_bound <= len(p.tags) <= u_bound]
+    aux = [p for p in photos if l_bound <= len(p.tags) <= u_bound]
+    if len([p for p in aux if p.orientation == 'V']) % 2 == 1:
+         # Even vertical photos constriction not respected
+         unused_vertical = [p for p in photos if p.orientation == 'V' and \
+                                              p not in aux]
+         aux.append(unused_vertical[0])
 
-    assert len(remain) != 0
-    _add_vertical_photo(photos, remain)
-
-    assert remain is not None
-
-    return remain
+    photos = aux
+    return photos
 
 
 def discard_random(photos: List[Photo]) -> List[Photo]:
@@ -52,11 +36,15 @@ def discard_random(photos: List[Photo]) -> List[Photo]:
 
     assert 0 < Config.DISCARD_PER < 1
 
-    how_many_remain = len(photo) - int(len(photo) * Config.DISCARD_PER)
+    percent_keep = 1 - Config.DISCARD_PER
+    horizontal = [p for p in photos if p.orientation == 'H']
+    vertical = [p for p in photos if p.orientation == 'V']
+    h_keep = int(len(horizontal) * percent_keep)
+    v_keep = int(len(vertical) * percent_keep)
+    if v_keep % 2 == 1:
+        v_keep += 1
 
-    remain = random.sample(photos, how_many_remain)
-    assert len(remain) != 0
-    _add_vertical_photo(photos, remain)
-    assert len(remain) != 0
+    horizontal = random.sample(horizontal, h_keep)
+    vertical = random.sample(vertical, v_keep)
 
-    return remain
+    return horizontal + vertical

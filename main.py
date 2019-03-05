@@ -18,8 +18,7 @@ from util import read_input, write_output
 random.seed(None)
 photos = read_input("b_lovely_landscapes.txt")
 
-# discard_strategies = [keep_all, discard_outlier, discard_random]
-discard_strategies = [keep_all]
+discard_strategies = [keep_all, discard_outlier, discard_random]
 extinction_strategies = [no_remove]
 mutation_strategies = [no_mutation]
 cross_strategies = [adaptive_slice_cross]
