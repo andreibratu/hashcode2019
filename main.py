@@ -16,14 +16,15 @@ from strategy.extinction_strategy import rm_least_fit, rm_random
 from config import Config
 from util import read_input, write_output
 
-disc_strat = [keep_all, discard_outlier, discard_random]
+discard_strategy = [keep_all, discard_outlier, discard_random]
 cross_strat = [adaptive_slice_cross, slice_cross]
-ext_strat = [rm_least_fit]
-mut_strat = [random_mutate]
+extinction_strategy = [rm_least_fit]
+mutation_strategy = [random_mutate]
 input_files = ['a_example.txt', 'b_lovely_landscapes.txt',
-               'c_memorable_moments.txt', 'd_pet_pictures', 'e_shiny_selfies']
+               'c_memorable_moments.txt', 'd_pet_pictures.txt',
+               'e_shiny_selfies.txt']
 
-Config.GENERS = len(disc_strat)
+Config.GENERATORS = len(discard_strategy)
 
 ######
 generators = []
@@ -40,7 +41,7 @@ for input_file in input_files:
     output_file = input_file[0] + '_output.txt'
     photos = read_input(input_file)
 
-    for s in disc_strat:
+    for s in discard_strategy:
         g = Generator(
             photos=photos,
             discard_strategy=s,
@@ -55,9 +56,13 @@ for input_file in input_files:
         print('******')
 
     print('STARTING EVOLUTION PROCESS\n******')
-    strategies = itertools.product(*[pops, ext_strat, mut_strat, cross_strat])
-    how_many_s = len(pops)*len(ext_strat)*len(mut_strat)*len(cross_strat)
-    for s in strategies:
+    strategies = itertools.product(
+        *[pops, extinction_strategy, mutation_strategy, cross_strat]
+    )
+    how_many_s = len(pops) * len(extinction_strategy) * \
+                 len(mutation_strategy)*len(cross_strat)
+
+    for strategy in strategies:
         population, es, ms, cs = s
         print(es.__name__, ms.__name__, cs.__name__)
         Config.CURR_GENERATION = 0
@@ -69,7 +74,7 @@ for input_file in input_files:
             cross_strategy=cs,
         )
 
-        for g in range(Config.GNRTS):
+        for g in range(Config.GENERATIONS):
             random.seed(None)
             Config.CURR_GENERATION += 1
             pool.evolve()

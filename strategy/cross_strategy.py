@@ -43,12 +43,12 @@ def adaptive_slice_cross(i1: Individual, i2: Individual) -> Individual:
 
     This strategy builds upon the assumption of better slices over time made
     in `slice_cross` by combining larger and larger slices. The size used
-    by the adaptive algorithm is determined by splitting the `GNRTS`
+    by the adaptive algorithm is determined by splitting the `GENERATIONS`
     param into `step` intervals. A generation in interval `t` is assigned
     a step `t` for the tuple cross.
     """
 
-    interval = list(range(0, Config.GNRTS, Config.GNRTS//Config.STEP))
+    interval = list(range(0, Config.GENERATIONS, Config.GENERATIONS//Config.STEP))
     idx = 0
     for idx in range(len(interval)-1):
         if interval[idx] <= Config.CURR_GENERATION <= interval[idx+1]:

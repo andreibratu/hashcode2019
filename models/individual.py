@@ -12,6 +12,7 @@ class Individual:
         Individual.id += 1
         self.vertical_slides = [s for s in slides if s.photo2 is not None]
         self.meta = {}
+        self.photos_ids = set()
         self.calculate_fitness()
 
     def calculate_fitness(self):

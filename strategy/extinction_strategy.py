@@ -6,7 +6,7 @@ from config import Config
 
 
 # def no_remove(individuals: List[Individual]) -> List[Individual]:
-#     """Keep entire population between GNRTS.
+#     """Keep entire population between GENERATIONS.
 #
 #     Leads to more diversity over time, might slow evolution in later stages.
 #     """

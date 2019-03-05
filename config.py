@@ -4,12 +4,12 @@ from models.individual import Individual
 
 class Config:
     INDIVIDUALS = 5
-    GNRTS = 10
+    GENERATIONS = 10
     CURR_GENERATION = 0
-    OFFSPRING = 2
-    MUTATATION_PROB = 0.2
-    DISCARD_PER = 0
-    # EXTN_PER = 0.2
+    OFFSPRINGS = 2
+    MUTATION_PROBABILITY = 0.2
+    DISCARD_PERCENT = 0
+    EXTINCTION_PERCENT = 0.2
     TUPLE_SIZE = 3
     STEP = 10
 

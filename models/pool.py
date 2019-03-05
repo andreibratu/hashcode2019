@@ -54,7 +54,7 @@ class Pool:
                 idx = q.get()
 
                 i1, i2 = self.select_parents()
-                # print(f'POOL {self.id} OFFSPRING {idx} <- {i1} x {i2}')
+                # print(f'POOL {self.id} OFFSPRINGS {idx} <- {i1} x {i2}')
                 offspring = self.cross_strategy(i1, i2)
                 offspring.meta = i1.meta
                 result[idx] = offspring
@@ -62,11 +62,11 @@ class Pool:
                 q.task_done()
             return True
 
-        offsprings = [None for _ in range(Config.OFFSPRING)]
+        offsprings = [None for _ in range(Config.OFFSPRINGS)]
         work_q = Queue(maxsize=0)
-        num_threads = min(50, Config.OFFSPRING)
+        num_threads = min(50, Config.OFFSPRINGS)
 
-        for i in range(Config.OFFSPRING):
+        for i in range(Config.OFFSPRINGS):
             work_q.put(i)
 
         for i in range(num_threads):
@@ -79,7 +79,7 @@ class Pool:
         assert None not in offsprings
 
         for i in self.population:
-            if random.random() <= Config.MUTATATION_PROB:
+            if random.random() <= Config.MUTATION_PROBABILITY:
                 i = self.mutation_strategy(i)
                 i.calculate_fitness()
 

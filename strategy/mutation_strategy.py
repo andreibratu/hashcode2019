@@ -25,21 +25,28 @@ def swap_photos_slide(i: Individual) -> Individual:
 def swap_slides(i: Individual) -> Individual:
     """Swap two slides from individual."""
 
-    idx1, idx2 = random.sample(range(0, len(i.slides)), 2)
-    i.slides[idx1], i.slides[idx2] = i.slides[idx2], i.slides[idx1]
-    return i
+    try:
+        idx1, idx2 = random.sample(range(0, len(i.slides)), 2)
+        i.slides[idx1], i.slides[idx2] = i.slides[idx2], i.slides[idx1]
+        return i
+    except ValueError:
+        for s in slides:
+            print(s.photo1)
+            if s.photo2 is not None:
+                print(s.photo2)
+        throw(ValueError)
 
 
-def remove_random_slide(i: Individual) -> Individual:
-    """Remove random slide from individual."""
-
-    idx = random.sample(range(0, len(i.slides)), 1)[0]
-    i.slides = i.slides[:idx] + i.slides[idx+1:]
-    return i
+# def remove_random_slide(i: Individual) -> Individual:
+#     """Remove random slide from individual."""
+#
+#     idx = random.sample(range(0, len(i.slides)), 1)[0]
+#     i.slides = i.slides[:idx] + i.slides[idx+1:]
+#     return i
 
 
 def random_mutate(i: Individual) -> Individual:
     """Apply random mutation on the individual."""
 
-    f = random.sample([swap_photos_slide, swap_slides, remove_random_slide], 1)
+    f = random.sample([swap_photos_slide, swap_slides], 1)
     return f[0](i)

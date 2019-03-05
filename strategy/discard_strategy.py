@@ -13,15 +13,15 @@ def keep_all(photos: List[Photo]) -> List[Photo]:
 def discard_outlier(photos: List[Photo]) -> List[Photo]:
     """Discard photos whose number of tags diverge from set mean by margin."""
 
-    assert 0 <= Config.DISCARD_PER < 1
+    assert 0 <= Config.DISCARD_PERCENT < 1
 
-    if Config.DISCARD_PER == 0:
+    if Config.DISCARD_PERCENT == 0:
         return photos
 
     number_tags = [len(p.tags) for p in photos]
     avg = sum(number_tags)/(len(number_tags))
-    l_bound = avg - (avg * Config.DISCARD_PER)
-    u_bound = avg + (avg * Config.DISCARD_PER)
+    l_bound = avg - (avg * Config.DISCARD_PERCENT)
+    u_bound = avg + (avg * Config.DISCARD_PERCENT)
 
     aux = [p for p in photos if l_bound <= len(p.tags) <= u_bound]
     if len([p for p in aux if p.orientation == 'V']) % 2 == 1:
@@ -37,9 +37,9 @@ def discard_outlier(photos: List[Photo]) -> List[Photo]:
 def discard_random(photos: List[Photo]) -> List[Photo]:
     """Discard a random percent of the photos from the set."""
 
-    assert 0 <= Config.DISCARD_PER < 1
+    assert 0 <= Config.DISCARD_PERCENT < 1
 
-    percent_keep = 1 - Config.DISCARD_PER
+    percent_keep = 1 - Config.DISCARD_PERCENT
     horizontal = [p for p in photos if p.orientation == 'H']
     vertical = [p for p in photos if p.orientation == 'V']
     h_keep = int(len(horizontal) * percent_keep)

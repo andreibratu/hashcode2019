@@ -16,12 +16,12 @@ class Generator:
     id = 0
 
     def __init__(self, photos: List[Photo], discard_strategy: Callable):
-        photos = discard_strategy(photos)
-        self.discard_strategy = discard_strategy
-        self.v_photos = [p for p in photos if p.orientation == 'V']
-        self.h_photos = [p for p in photos if p.orientation == 'H']
         self.id = Generator.id
         Generator.id += 1
+        self.discard_strategy = discard_strategy
+        photos = discard_strategy(photos)
+        self.v_photos = [p for p in photos if p.orientation == 'V']
+        self.h_photos = [p for p in photos if p.orientation == 'H']
 
 
     def _attach_meta(self, i: Individual) -> Individual:
@@ -37,7 +37,7 @@ class Generator:
             while not q.empty():
                 idx = q.get()
 
-                print(f'GENERATOR {self.id}/{Config.GENERS-1} INDIVIDUAL {idx}')
+                print(f'GEN {self.id}/{Config.GENERATORS-1} INDIVIDUAL {idx}')
 
                 slides = []
                 slides += [Slide(p, None) for p in self.h_photos]
@@ -47,6 +47,8 @@ class Generator:
                     # While not all vertical photos were used
                     unused_vertical_ids = vertical_photo_ids-v_used_ids
                     idx1_v, idx2_v = random.sample(unused_vertical_ids, 2)
+                    assert idx1_v not in v_used_ids
+                    assert idx2_v not in v_used_ids
                     for p in self.v_photos:
                         if p.id == idx1_v:
                             photo1_v = p
