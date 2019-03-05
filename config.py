@@ -2,7 +2,7 @@
 
 class Config:
     INIT_INDIVIDUALS = 5
-    GENERATIONS = 5
+    GENERATIONS = 10
     CURR_GENERATION = 0
     OFFSPRING = 3
     EXTN_PER = 0
@@ -10,4 +10,4 @@ class Config:
     DISCARD_PER = 0.2
     EXTN_PER = 0.2
     TUPLE_SIZE = 3
-    STEP = 200
+    STEP = 5

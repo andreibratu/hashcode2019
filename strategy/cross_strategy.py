@@ -48,17 +48,10 @@ def adaptive_slice_cross(i1: Individual, i2: Individual) -> Individual:
     a step `t` for the tuple cross.
     """
 
-    interval_size = Config.GENERATIONS // Config.STEP
-    left_end_interval = 0
-    right_end_interval = interval_size - 1
-    interval = 1
-    while True:
-        print(left_end_interval, Config.CURR_GENERATION, right_end_interval)
-        if left_end_interval <= Config.CURR_GENERATION <= right_end_interval:
+    interval = list(range(0, Config.GENERATIONS, Config.STEP))
+    idx = 0
+    for idx in range(len(interval)-1):
+        if interval[idx] <= Config.CURR_GENERATION <= interval[idx+1]:
             break
-        else:
-            left_end_interval = right_end_interval
-            right_end_interval += interval_size
-            interval += 1
-    Config.TUPLE_SIZE = interval
+    Config.TUPLE_SIZE = idx+1
     return slice_cross(i1, i2)
