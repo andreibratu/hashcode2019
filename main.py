@@ -1,4 +1,5 @@
 import random
+import itertools
 
 from models.photo import Photo
 from models.slide import Slide
@@ -20,19 +21,19 @@ from util import read_input, write_output
 random.seed(None)
 photos = read_input("b_lovely_landscapes.txt")
 
-discard_strategies = [keep_all]
-extinction_strategies = [no_remove]
-mutation_strategies = [random_mutation_strategy]
-cross_strategies = [adaptive_slice_cross]
+disc_strat = [keep_all]
+ext_strat = [no_remove]
+mut_strat = [no_mutation]
+cross_strat = [slice_cross]
 
 ######
 generators = []
-individuals_sets = []
+populations = []
 pools = []
 best_individuals = []
 ######
 
-for s in discard_strategies:
+for s in disc_strat:
     g = Generator(
         photos=photos,
         discard_strategy=s,
@@ -41,38 +42,39 @@ for s in discard_strategies:
 
 print('GENERATING INDIVIDUALS\n******')
 for g in generators:
-    # Threaded generator might fail and return None individuals, discard them
     generated = g.generate(Config.INIT_INDIVIDUALS)
     assert None not in generated
-    individuals_sets.append(generated)
+    populations.append(generated)
     print('******')
 
-print('\nSTARTING EVOLUTION PROCESS\n******')
-for population in individuals_sets:
-    for es in extinction_strategies:
-        for ms in mutation_strategies:
-            for cs in cross_strategies:
-                Config.CURR_GENERATION = 0
+print('STARTING EVOLUTION PROCESS\n******')
+for s in itertools.product(*[populations, ext_strat, mut_strat, cross_strat]):
+    print(s)
+    population, es, ms, cs = s
+    Config.CURR_GENERATION = 0
 
-                pool = Pool(
-                    population=population,
-                    extinction_strategy=es,
-                    mutation_strategy=ms,
-                    cross_strategy=cs,
-                )
+    pool = Pool(
+        population=population,
+        extinction_strategy=es,
+        mutation_strategy=ms,
+        cross_strategy=cs,
+    )
 
-                for g in range(Config.GENERATIONS):
-                    Config.CURR_GENERATION += 1
-                    pool.evolve()
-                    pool.set_best_individual()
-                    bf = pool.population[-1].fitness
-                    print(f'POOL {pool.id} GENERATION {g} FITNESS {bf}')
+    for g in range(Config.GENERATIONS):
+        Config.CURR_GENERATION += 1
+        pool.evolve()
+        pool.set_best_individual()
+        bf = pool.population[-1].fitness
+        print(f'POOL {pool.id} GENERATION {g} FITNESS {bf}')
+        print('***')
 
-                pool.set_best_individual()
-                best_individuals.append(pool.best)
-                print(pool.best.meta)
+    best_individuals.append(pool.best)
 
 best_individuals.sort(key=lambda i: i.fitness)
 best = best_individuals[-1]
-print(f'Top dog: {best.fitness} -- {best.meta}')
-# write_output(best_individuals[-1], "output.txt")
+best = Config.add_meta(best)
+print(f'Fitness: {best.fitness}')
+for k, v in best.meta.items():
+    print(f'{k} -- {v}')
+
+write_output(best, "output.txt")

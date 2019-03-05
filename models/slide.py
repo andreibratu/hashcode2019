@@ -12,9 +12,9 @@ class Slide:
 
     def __str__(self):
         if self.photo2 is None:
-            return f'SLIDE: {self.photo1} None\n'
+            return str(self.photo1.id)
         else:
-            return f'SLIDE: {self.photo1} {self.photo2}\n'
+            return f'{self.photo1.id} {self.photo2.id}'
 
     def get_tags(self) -> List[str]:
         if self.photo2 is None:

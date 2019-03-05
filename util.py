@@ -27,6 +27,6 @@ def write_output(individual: Individual, file_name: str):
     """Write the solution in output file."""
 
     with open(file_name, 'w') as f:
-        f.write(len(individual.slides()))
-        for slide in individual.slides():
+        f.write(str(len(individual.slides)))
+        for slide in individual.slides:
             f.write(str(slide))
