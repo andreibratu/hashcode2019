@@ -8,7 +8,9 @@ from models.pool import Pool
 
 from strategy.cross_strategy import slice_cross, adaptive_slice_cross
 from strategy.discard_strategy import keep_all, discard_outlier, discard_random
-from strategy.mutation_strategy import no_mutation, swap_photos_in_slide
+from strategy.mutation_strategy import no_mutation, swap_photos_slide, \
+                                       remove_random_slide, swap_slides, \
+                                       random_mutation_strategy
 from strategy.extinction_strategy import no_remove, rm_least_fit, rm_random
 
 from config import Config
@@ -18,15 +20,17 @@ from util import read_input, write_output
 random.seed(None)
 photos = read_input("b_lovely_landscapes.txt")
 
-discard_strategies = [keep_all, discard_outlier, discard_random]
+discard_strategies = [keep_all]
 extinction_strategies = [no_remove]
-mutation_strategies = [no_mutation]
+mutation_strategies = [random_mutation_strategy]
 cross_strategies = [adaptive_slice_cross]
 
+######
 generators = []
 individuals_sets = []
 pools = []
 best_individuals = []
+######
 
 for s in discard_strategies:
     g = Generator(
@@ -35,15 +39,12 @@ for s in discard_strategies:
     )
     generators.append(g)
 
-g_idx = 0
 print('GENERATING INDIVIDUALS\n******')
 for g in generators:
-    g.idx = g_idx
     # Threaded generator might fail and return None individuals, discard them
-    generated = set(g.generate(Config.INIT_INDIVIDUALS))
-    empty_set = set([None])
-    individuals_sets.append(list(generated-empty_set))
-    g_idx += 1
+    generated = g.generate(Config.INIT_INDIVIDUALS)
+    assert None not in generated
+    individuals_sets.append(generated)
     print('******')
 
 print('\nSTARTING EVOLUTION PROCESS\n******')

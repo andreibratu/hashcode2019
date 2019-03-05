@@ -10,11 +10,15 @@ from models.individual import Individual
 class Generator:
     """Generate Individual objects from an input of Photo objects."""
 
+    id = 0
+
     def __init__(self, photos: List[Photo], discard_strategy: Callable):
         photos = discard_strategy(photos)
         self.discard_strategy = discard_strategy
         self.v_photos = [p for p in photos if p.orientation == 'V']
         self.h_photos = [p for p in photos if p.orientation == 'H']
+        self.id = Generator.id
+        Generator.id += 1
 
 
     def attach_meta(self, individuals: List[Individual]) -> List[Individual]:
@@ -33,7 +37,7 @@ class Generator:
             while not q.empty():
                 idx = q.get()
 
-                print(f'GENERATOR {self.idx} INDIVIDUAL {idx}')
+                print(f'GENERATOR {self.id} INDIVIDUAL {idx}')
 
                 slides = []
                 slides += [Slide(p, None) for p in self.h_photos]
