@@ -1,52 +1,40 @@
 import random
+from numpy.random import choice
 from typing import Callable
 from models.individual import Individual
-
-
-def no_mutation(i: Individual) -> Individual:
-    """Individuals do not suffer random mutations."""
-
-    return i
+from models.slide import Slide
 
 
 def swap_photos_slide(i: Individual) -> Individual:
     """Find a vertical slide in individual and swap its photos."""
 
-    if len(i.vertical_slides) == 0:
+    aux = i.slides[:]
+    v_slides = [s for s in aux if s.photo2 is not None]
+    if len(v_slides) == 0:
         return i
 
-    mutate_slide = random.sample(i.vertical_slides, 1)[0]
+    mutate_slide = random.sample(v_slides, 1)[0]
+    idx = aux.index(mutate_slide)
 
-    mutate_slide.photo1, mutate_slide.photo2 = \
-        mutate_slide.photo2, mutate_slide.photo1
+    p = Slide(aux[idx].photo2, aux[idx].photo1)
+    aux[idx] = p
+    i.slides = aux
     return i
 
 
 def swap_slides(i: Individual) -> Individual:
     """Swap two slides from individual."""
 
-    try:
-        idx1, idx2 = random.sample(range(0, len(i.slides)), 2)
-        i.slides[idx1], i.slides[idx2] = i.slides[idx2], i.slides[idx1]
-        return i
-    except ValueError:
-        for s in slides:
-            print(s.photo1)
-            if s.photo2 is not None:
-                print(s.photo2)
-        throw(ValueError)
+    aux = i.slides[:]
+    idx1, idx2 = random.sample(range(0, len(aux)), 2)
+    aux[idx1], aux[idx2] = aux[idx2], aux[idx1]
+    assert aux != i.slides
+    i.slides = aux
+    return i
 
 
-# def remove_random_slide(i: Individual) -> Individual:
-#     """Remove random slide from individual."""
-#
-#     idx = random.sample(range(0, len(i.slides)), 1)[0]
-#     i.slides = i.slides[:idx] + i.slides[idx+1:]
-#     return i
-
-
-def random_mutate(i: Individual) -> Individual:
+def random_mutation(i: Individual) -> Individual:
     """Apply random mutation on the individual."""
 
-    f = random.sample([swap_photos_slide, swap_slides], 1)
-    return f[0](i)
+    f = choice([swap_photos_slide, swap_slides])
+    return f(i)

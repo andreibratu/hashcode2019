@@ -1,85 +1,34 @@
 import random
-from queue import Queue
-from threading import Thread
 from typing import List, Callable
-
 from models.photo import Photo
 from models.slide import Slide
-from models.individual import Individual
-
-from config import Config
+from sklearn.preprocessing import OneHotEncoder
 
 
 class Generator:
-    """Generate Individual objects from an input of Photo objects."""
+    """Generate random slideshow from given photos."""
 
-    id = 0
-
-    def __init__(self, photos: List[Photo], discard_strategy: Callable):
-        self.id = Generator.id
-        Generator.id += 1
-        self.discard_strategy = discard_strategy
-        photos = discard_strategy(photos)
-        self.v_photos = [p for p in photos if p.orientation == 'V']
-        self.h_photos = [p for p in photos if p.orientation == 'H']
+    def __init__(self, photos: List[Photo]):
+        self.slides = []
+        self.photos = photos
+        self.generate_slides()
 
 
-    def _attach_meta(self, i: Individual) -> Individual:
-        assert hasattr(i, 'meta')
-        i.meta.update({
-            'discard': self.discard_strategy.__name__
-        })
-        return i
+    def generate_slides(self) -> List[Slide]:
+        print('Generating slides..')
+        h_slides = [Slide(p, None) for p in self.photos if p.orientation == 'H']
+        v_slides = []
+        v_photos = [p for p in self.photos if p.orientation == 'V']
+
+        while v_photos != []:
+            p1, p2 = random.sample(v_photos, 2)
+            v_photos.remove(p1)
+            v_photos.remove(p2)
+            v_slides.append(Slide(p1, p2))
+
+        self.slides = h_slides + v_slides
 
 
-    def generate(self, how_many: int) -> List[Individual]:
-        def generate_individual(q, result):
-            while not q.empty():
-                idx = q.get()
-
-                print(f'GEN {self.id}/{Config.GENERATORS-1} INDIVIDUAL {idx}')
-
-                slides = []
-                slides += [Slide(p, None) for p in self.h_photos]
-                v_used_ids = set()
-
-                while len(v_used_ids) != len(self.v_photos):
-                    # While not all vertical photos were used
-                    unused_vertical_ids = vertical_photo_ids-v_used_ids
-                    idx1_v, idx2_v = random.sample(unused_vertical_ids, 2)
-                    assert idx1_v not in v_used_ids
-                    assert idx2_v not in v_used_ids
-                    for p in self.v_photos:
-                        if p.id == idx1_v:
-                            photo1_v = p
-                        if p.id == idx2_v:
-                            photo2_v = p
-                    slides.append(Slide(photo1_v, photo2_v))
-                    v_used_ids.add(idx1_v)
-                    v_used_ids.add(idx2_v)
-
-                random.shuffle(slides)
-                result[idx] = self._attach_meta(Individual(slides))
-
-                q.task_done()
-            return True
-
-        result = [None for _ in range(how_many)]
-        vertical_photo_ids = set([p.id for p in self.v_photos])
-        work_q = Queue(maxsize=0)
-        num_threads = min(50, how_many)
-
-        for i in range(how_many):
-            work_q.put(i)
-
-        for i in range(num_threads):
-            worker = Thread(target=generate_individual, args=[work_q, result])
-            worker.setDaemon(True)
-            worker.start()
-
-        work_q.join()
-
-        result = [i for i in result if i is not None]
-        assert result != []
-
-        return result
+    def get_slideshow(self) -> List[Slide]:
+        random.shuffle(self.slides)
+        return self.slides

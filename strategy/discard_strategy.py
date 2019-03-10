@@ -4,13 +4,13 @@ from models.photo import Photo
 from config import Config
 
 
-def keep_all(photos: List[Photo]) -> List[Photo]:
+def keep_all(photos: List[Photo]):
     """Keep the initial set."""
 
-    return photos
+    pass
 
 
-def discard_outlier(photos: List[Photo]) -> List[Photo]:
+def discard_outlier(photos: List[Photo]):
     """Discard photos whose number of tags diverge from set mean by margin."""
 
     assert 0 <= Config.DISCARD_PERCENT < 1
@@ -31,10 +31,9 @@ def discard_outlier(photos: List[Photo]) -> List[Photo]:
          aux.append(unused_vertical[0])
 
     photos = aux
-    return photos
 
 
-def discard_random(photos: List[Photo]) -> List[Photo]:
+def discard_random(photos: List[Photo]):
     """Discard a random percent of the photos from the set."""
 
     assert 0 <= Config.DISCARD_PERCENT < 1
@@ -50,4 +49,4 @@ def discard_random(photos: List[Photo]) -> List[Photo]:
     horizontal = random.sample(horizontal, h_keep)
     vertical = random.sample(vertical, v_keep)
 
-    return horizontal + vertical
+    photos = horizontal + vertical

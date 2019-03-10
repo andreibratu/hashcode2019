@@ -5,13 +5,13 @@ from models.individual import Individual
 from config import Config
 
 
-# def no_remove(individuals: List[Individual]) -> List[Individual]:
-#     """Keep entire population between GENERATIONS.
-#
-#     Leads to more diversity over time, might slow evolution in later stages.
-#     """
-#
-#     return individuals
+def no_remove(individuals: List[Individual]) -> List[Individual]:
+    """Keep entire population between GENERATIONS.
+
+    Leads to more diversity over time, might slow evolution in later stages.
+    """
+
+    return individuals
 
 
 def rm_least_fit(individuals: List[Individual]) -> List[Individual]:
@@ -24,6 +24,7 @@ def rm_least_fit(individuals: List[Individual]) -> List[Individual]:
     individuals = individuals[-1:-Config.INDIVIDUALS-1:-1]
     assert len(individuals) == Config.INDIVIDUALS
     return individuals
+
 
 def rm_random(individuals: List[Individual]) -> List[Individual]:
     """Remove a random percent of the pool.
